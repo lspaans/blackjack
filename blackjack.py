@@ -403,7 +403,7 @@ class BlackJackPlayer(CardGamePlayer):
                 print(
                     "player {0} has {1} (value='{2}')".format(
                         self.getName(),
-                        hand(),
+                        hand,
                         hand.getHighestValue()
                     )
                 )
@@ -423,22 +423,23 @@ class BlackJackBank(BlackJackPlayer):
 
     def play(self, shoe):
         self.setState('playing')
-        for card in self.getHand().getCards():
-            card.setState('visible')
-        while self.getHand().getHighestValue() <= 16:
-            time.sleep(int(5*random.random()))
-            self.getHand().addCard(shoe.dealCard('visible'))
-            print(
-                "player {0} has {1} (value='{2}')".format(
-                    self.getName(),
-                    self.getHand(),
-                    self.getHand().getHighestValue()
+        for hand in self.getHands():
+            for card in hand.getCards():
+                card.setState('visible')
+            while hand.getHighestValue() <= 16:
+                time.sleep(int(5*random.random()))
+                hand.addCard(shoe.dealCard('visible'))
+                print(
+                    "player {0} has {1} (value='{2}')".format(
+                        self.getName(),
+                        hand,
+                        hand.getHighestValue()
+                    )
                 )
-            )
-        if self.getHand().getHighestValue() > 21:
-            self.setState('busted')
-        else:
-            self.setState('folded')
+                if hand.getHighestValue() > 21:
+                    self.setState('busted')
+                else:
+                   self.setState('folded')
 
 class CardGameController(object):
 
@@ -566,12 +567,13 @@ class BlackJackController(CardGameController):
                 yield(player)
 
             if self.hasFoldedPlayers():
-                print(
-                    "player {0} has {1}".format(
-                        self.getBank().getName(),
-                        self.getBank().getHand()
+                for hand in self.getBank().getHands():
+                    print(
+                        "player {0} has {1}".format(
+                            self.getBank().getName(),
+                            hand
+                        )
                     )
-                )
                 self.getBank().play(self.getShoe())
                 yield(self.getBank())
 
