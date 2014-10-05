@@ -170,15 +170,26 @@ class BlackJackCardSet(CardSet):
                 value = multiAdd(value, card.getValue())
         return(value)
 
-    def getHighestValue(self):
+    def getValueType(self, type):
         if len(self.getValue()) > 0:
             m = filter(lambda v: v <= 21, sorted(self.getValue()))
             if len(m) > 0:
-                return(max(m))
+                if type == 'high':
+                    return(max(m))
+                elif type == 'low':
+                    return(min(m))
+                else:
+                    return(None)
             else:
                 return(None)
         else:
             return(0)
+
+    def getHighestValue(self):
+        return(self.getValueType('high'))
+
+    def getLowestValue(self):
+        return(self.getValueType('low'))
 
 class CardGameHand(CardSet):
 
@@ -189,8 +200,31 @@ class CardGameHand(CardSet):
 
 class BlackJackHand(BlackJackCardSet, CardGameHand):
 
+    validStates = (
+        'folded', 'busted', 'playing', 'waiting'
+    )
+
     def __init__(self):
         super(BlackJackHand, self).__init__()
+
+    def getState(self):
+        return(self.state)
+
+    def resetState(self):
+        self.setState('waiting')
+
+    def setState(self, state):
+        if state in self.validStates:
+            self.state = state
+            print(
+                "Hand state: '{0}'".format(
+                    self.getState()
+                )
+            )
+        else:
+            raise Exception(
+                "Invalid state: '{0}'".format(state)
+            )
 
 class CardGameHandSet(object):
 
@@ -318,7 +352,7 @@ class CardGamePlayer(object):
     HandSetClass = CardGameHandSet
 
     validStates = (
-        'folded', 'resigned', 'busted', 'playing', 'waiting'
+        'resigned', 'busted', 'playing', 'waiting'
     )
 
     def __init__(self, name="Player", cash=0.0):
@@ -396,21 +430,21 @@ class BlackJackPlayer(CardGamePlayer):
 
     def play(self, shoe, bank):
         self.setState('playing')
-        for hand in self.getHands():
+        for n, hand in enumerate(self.getHands()):
             while hand.getHighestValue() < 15:
                 time.sleep(int(5*random.random()))
                 hand.addCard(shoe.dealCard('visible'))
                 print(
-                    "player {0} has {1} (value='{2}')".format(
+                    "player {0} has {1} ({2}) (value='{3}')".format(
                         self.getName(),
-                        hand,
+                        hand, n,
                         hand.getHighestValue()
                     )
                 )
-        if hand.getHighestValue() > 21:
-            self.setState('busted')
-        else:
-            self.setState('folded')
+            if hand.getHighestValue() > 21:
+                hand.setState('busted')
+            else:
+                hand.setState('folded')
 
 class BlackJackBank(BlackJackPlayer):
 
@@ -423,16 +457,16 @@ class BlackJackBank(BlackJackPlayer):
 
     def play(self, shoe):
         self.setState('playing')
-        for hand in self.getHands():
+        for n, hand in enumerate(self.getHands()):
             for card in hand.getCards():
                 card.setState('visible')
             while hand.getHighestValue() <= 16:
                 time.sleep(int(5*random.random()))
                 hand.addCard(shoe.dealCard('visible'))
                 print(
-                    "player {0} has {1} (value='{2}')".format(
+                    "player {0} has {1} ({2}) (value='{3}')".format(
                         self.getName(),
-                        hand,
+                        hand, n,
                         hand.getHighestValue()
                     )
                 )
@@ -551,11 +585,11 @@ class BlackJackController(CardGameController):
             self.initRound()
 
             for player in self.getPlayers():
-                for hand in player.getHands():
+                for n, hand in enumerate(player.getHands()):
                     print(
-                        "player {0} has {1}".format(
+                        "player {0} has {1} ({2})".format(
                             player.getName(),
-                            hand
+                            hand, n
                         )
                     )
                 # HIERO: Moet ik de speler laten spelen. En dan een extra parameter 'hand' meegeven,
@@ -567,11 +601,11 @@ class BlackJackController(CardGameController):
                 yield(player)
 
             if self.hasFoldedPlayers():
-                for hand in self.getBank().getHands():
+                for n, hand in enumerate(self.getBank().getHands()):
                     print(
-                        "player {0} has {1}".format(
+                        "player {0} has {1} ({2})".format(
                             self.getBank().getName(),
-                            hand
+                            hand, n
                         )
                     )
                 self.getBank().play(self.getShoe())
