@@ -3,7 +3,12 @@
 import random
 import time
 
-class Card(object):
+class BlackJackObject(object):
+
+    def isValidType(self, objectType, validType):
+        return(isinstance(objectType, validType))
+
+class Card(BlackJackObject):
 
     faces = (
         '2', '3', '4',  '5', '6',
@@ -19,7 +24,7 @@ class Card(object):
 
     def setType(self, face, suite):
         if (
-            isinstance(suite, str) and
+            self.isValidType(suite, str) and
             suite.upper() in self.getSuits()
         ):
             self.suite = suite
@@ -28,7 +33,7 @@ class Card(object):
                 "Invalid suite: '{0}'".format(suite)
             )
         if (
-            isinstance(face, str) and
+            self.isValidType(face, str) and
             face.upper() in self.getFaces()
         ):
             self.face = face 
@@ -91,11 +96,11 @@ class BlackJackCard(Card):
 
     def setValue(self, values):
         if (
-            isinstance(values, tuple) and
+            self.isValidType(values, tuple) and
             not len(
                 filter(
                     lambda value:
-                    not isinstance(value, int),
+                    not self.isValidType(value, int),
                     values
                 )
             )
@@ -111,7 +116,7 @@ class BlackJackCard(Card):
     def getValue(self):
         return(self.values)
 
-class CardSet(object):
+class CardSet(BlackJackObject):
 
     CardClass = Card
 
@@ -127,7 +132,7 @@ class CardSet(object):
         return(self.cards)
 
     def addCard(self, card):
-        if isinstance(card, self.CardClass):
+        if self.isValidType(card, self.CardClass):
             self.cards.append(card)
         else:
             raise Exception(
@@ -226,7 +231,7 @@ class BlackJackHand(BlackJackCardSet, CardGameHand):
                 "Invalid state: '{0}'".format(state)
             )
 
-class CardGameHandSet(object):
+class CardGameHandSet(BlackJackObject):
 
     HandClass = CardGameHand
 
@@ -237,7 +242,7 @@ class CardGameHandSet(object):
         self.hands = []
         if not hands:
             hands = [self.HandClass()]
-        if isinstance(hands, list):
+        if self.isValidType(hands, list):
             for hand in hands:
                 self.addHand(hand)
         else:
@@ -251,7 +256,7 @@ class CardGameHandSet(object):
         return(self.hands)
 
     def addHand(self, hand):
-        if isinstance(hand, self.HandClass):
+        if self.isValidType(hand, self.HandClass):
             self.hands.append(hand)
         else:
             raise Exception(
@@ -347,7 +352,7 @@ class BlackJackShoe(CardGameShoe, BlackJackCardSet):
             self.numberOfDecks
         )
 
-class CardGamePlayer(object):
+class CardGamePlayer(BlackJackObject):
 
     HandSetClass = CardGameHandSet
 
@@ -362,7 +367,7 @@ class CardGamePlayer(object):
         self.setHandSet(self.HandSetClass())
 
     def setName(self, name):
-        if isinstance(name, str) and len(name) > 0:
+        if self.isValidType(name, str) and len(name) > 0:
             self.name = name
         else:
             raise Exception(
@@ -374,8 +379,8 @@ class CardGamePlayer(object):
 
     def setCash(self, cash):
         if (
-            isinstance(cash, float) or
-            isinstance(cash, int)
+            self.isValidType(cash, float) or
+            self.isValidType(cash, int)
         ):
             self.cash = float(cash)
         else:
@@ -406,7 +411,7 @@ class CardGamePlayer(object):
         return(self.state)
 
     def setHandSet(self, handset):
-        if isinstance(handset, self.HandSetClass):
+        if self.isValidType(handset, self.HandSetClass):
             self.handset = handset
         else:
             raise Exception(
@@ -434,13 +439,14 @@ class BlackJackPlayer(CardGamePlayer):
             while hand.getHighestValue() < 15:
                 time.sleep(int(5*random.random()))
                 hand.addCard(shoe.dealCard('visible'))
-                print(
-                    "player {0} has {1} ({2}) (value='{3}')".format(
-                        self.getName(),
-                        hand, n,
-                        hand.getHighestValue()
-                    )
-                )
+                print((
+                    "player {0} has {1} (hand={2}," + 
+                    "value='{3}')"
+                ).format(
+                    self.getName(),
+                    hand, n,
+                    hand.getHighestValue()
+                ))
             if hand.getHighestValue() > 21:
                 hand.setState('busted')
             else:
@@ -463,19 +469,19 @@ class BlackJackBank(BlackJackPlayer):
             while hand.getHighestValue() <= 16:
                 time.sleep(int(5*random.random()))
                 hand.addCard(shoe.dealCard('visible'))
-                print(
-                    "player {0} has {1} ({2}) (value='{3}')".format(
-                        self.getName(),
-                        hand, n,
-                        hand.getHighestValue()
-                    )
-                )
+                print((
+                    "player {0} has {1} (hand='{2},value='{3}')"
+                ).format(
+                    self.getName(),
+                    hand, n,
+                    hand.getHighestValue()
+                ))
                 if hand.getHighestValue() > 21:
                     self.setState('busted')
                 else:
                    self.setState('folded')
 
-class CardGameController(object):
+class CardGameController(BlackJackObject):
 
     PlayerClass = CardGamePlayer
 
@@ -485,11 +491,11 @@ class CardGameController(object):
 
     def setPlayers(self, players):
         if (
-            isinstance(players, list) and
+            self.isValidType(players, list) and
             not len(
                 filter(
                     lambda player:
-                    not isinstance(player, self.PlayerClass),
+                    not self.isValidType(player, self.PlayerClass),
                     players
                 )
             )
@@ -506,7 +512,7 @@ class CardGameController(object):
         return(self.players)
 
     def setRound(self, round):
-        if isinstance(round, int):
+        if self.isValidType(round, int):
             self.round = round
         else:
             raise Exception(
@@ -554,7 +560,7 @@ class BlackJackController(CardGameController):
         self.setShoe(shoe)
 
     def setBank(self, bank):
-        if isinstance(bank, BlackJackBank):
+        if self.isValidType(bank, BlackJackBank):
             self.bank = bank
         else:
             raise Exception(
@@ -567,7 +573,7 @@ class BlackJackController(CardGameController):
         return(self.bank)
 
     def setShoe(self, shoe):
-        if isinstance(shoe, BlackJackShoe):
+        if self.isValidType(shoe, BlackJackShoe):
             self.shoe = shoe
             self.getShoe().shuffle()
         else:
@@ -586,12 +592,12 @@ class BlackJackController(CardGameController):
 
             for player in self.getPlayers():
                 for n, hand in enumerate(player.getHands()):
-                    print(
-                        "player {0} has {1} ({2})".format(
-                            player.getName(),
-                            hand, n
-                        )
-                    )
+                    print((
+                        "player {0} has {1} ({2})"
+                    ).format(
+                        player.getName(),
+                        hand, n
+                    ))
                 # HIERO: Moet ik de speler laten spelen. En dan een extra parameter 'hand' meegeven,
                 # of moet ik een Hand() laten spelen?
                 player.play(
@@ -602,12 +608,12 @@ class BlackJackController(CardGameController):
 
             if self.hasFoldedPlayers():
                 for n, hand in enumerate(self.getBank().getHands()):
-                    print(
-                        "player {0} has {1} ({2})".format(
-                            self.getBank().getName(),
-                            hand, n
-                        )
-                    )
+                    print((
+                        "player {0} has {1} ({2})"
+                    ).format(
+                        self.getBank().getName(),
+                        hand, n
+                    ))
                 self.getBank().play(self.getShoe())
                 yield(self.getBank())
 
@@ -647,7 +653,7 @@ class BlackJackController(CardGameController):
         super(BlackJackController, self).update()
         self.getBank().resetState()
 
-class CardGame(object):
+class CardGame(BlackJackObject):
 
     ControllerClass = BlackJackController
     PlayerClass = CardGamePlayer
@@ -664,7 +670,7 @@ class CardGame(object):
         )
 
     def setController(self, controller):
-        if isinstance(controller, self.ControllerClass):
+        if self.isValidType(controller, self.ControllerClass):
             self.controller = controller
         else:
             raise Exception(
@@ -677,7 +683,10 @@ class CardGame(object):
         return(self.controller)
 
     def start(self):
-        for player in self.getController().doTurn():
+        try:
+            for player in self.getController().doTurn():
+                pass
+        except KeyboardInterrupt:
             pass
 
 class BlackJack(CardGame):
