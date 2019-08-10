@@ -36,6 +36,12 @@ class Hand(object):
     def get_cards(self):
         return self._cards
 
+    def get_highest_value(self):
+        return None if len(self.values) == 0 else sorted(self.values)[-1]
+
+    def get_lowest_value(self):
+        return None if len(self.values) == 0 else sorted(self.values)[0]
+
     def get_maximum(self):
         return sef._maximum
 
@@ -71,6 +77,8 @@ class Hand(object):
         self._name = name
 
     cards = property(get_cards, set_cards)
+    highest_value = property(get_highest_value)
+    lowest_value = property(get_lowest_value)
     maximum = property(get_maximum, set_maximum)
     name = property(get_name, set_name)
     value = property(get_value)
