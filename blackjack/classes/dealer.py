@@ -1,8 +1,12 @@
 """Dealer."""
 
 from blackjack.classes.bank import Bank
+from blackjack.classes.hand import Hand
 from blackjack.classes.player import Player
 from blackjack.classes.shoe import Shoe
+from blackjack.exceptions.shoeempty import ShoeEmpty
+from blackjack.exceptions.handbusted import HandBusted
+from blackjack.exceptions.playerbusted import PlayerBusted
 
 
 class Dealer(object):
@@ -28,9 +32,13 @@ class Dealer(object):
         if not isinstance(round, int):
             raise ValueError("round is of wrong type")
 
-        if round == 1:
-            player.cards = self.shoe.deal(1 if isinstance(player, Bank) else 2)
-        else:
+        try: 
+            if round == 1:
+                player.add_hand(Hand(self.shoe.deal(
+                    1 if isinstance(player, Bank) else 2)))
+            else:
+                pass
+        except ShoeEmpty as exc:
             pass
 
     def get_name(self):

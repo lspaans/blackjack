@@ -4,5 +4,5 @@
 
 import pytest
 
-from blackjack import Bank, BlackJack, BlackJackCard, Dealer, Game, Hand, \
-                      Player
+from blackjack import exceptions, Bank, BlackJack, BlackJackCard, Dealer, \
+                      Game, Hand, Player

@@ -1,6 +1,6 @@
-"""ShoeEmpty.""" 
+"""PlayerBusted.""" 
 
 from blackjack.exceptions.blackjackexception import BlackJackException
 
-class ShoeEmpty(BlackJackException):
+class PlayerBusted(BlackJackException):
     pass

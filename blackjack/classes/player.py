@@ -31,7 +31,7 @@ class Player(object):
         if not isinstance(hand, Hand):
             raise ValueError("hand is of wrong type")
 
-        self._hands.append(card)
+        self._hands.append(hand)
 
     def get_hands(self):
         return self._hands
@@ -41,6 +41,9 @@ class Player(object):
 
     def get_name(self):
         return self._name
+
+    def get_number_of_hands(self):
+        return len(self.hands)
 
     def return_hands(self):
         hands = self.hands
@@ -69,3 +72,4 @@ class Player(object):
     game = property(get_game, set_game)
     hands = property(get_hands, set_hands)
     name = property(get_name, set_name)
+    number_of_hands = property(get_number_of_hands)

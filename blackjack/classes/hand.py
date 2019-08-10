@@ -1,6 +1,8 @@
 """Hand."""
 
 from blackjack.classes.blackjackcard import BlackJackCard as Card
+from blackjack.exceptions.handbusted import HandBusted
+from blackjack.exceptions.playerbusted import PlayerBusted
 
 
 class Hand(object):
