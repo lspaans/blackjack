@@ -20,7 +20,8 @@ class Player(object):
     def __repr__(self):
         return "{class_type}({name})".format(
                 class_type=type(self).__name__,
-                name="" if self.name == self.DEFAULT_NAME else repr(self.name)
+                name="" if self.name == self.DEFAULT_NAME else \
+                        "name={name}".format(name=repr(self.name))
                 )
 
     def __str__(self):
