@@ -1,25 +1,19 @@
 """Player."""
 
-import blackjack
-
-from blackjack.classes.card import Card
-from blackjack.classes.hand import Hand
-
 
 class Player(object):
+    # Hmmm.
+    DEFAULT_GAME_TYPE = object
     DEFAULT_NAME = "Player"
 
-    def __init__(self, game, name=DEFAULT_NAME, hands=None):
-        if hands is None:
-            hands = []
-
-        self._hands, self.hands = None, hands
+    def __init__(self, game, name=DEFAULT_NAME):
         self._game, self.game = None, game
         self._name, self.name = None, name
 
     def __repr__(self):
-        return "{class_type}({name})".format(
+        return "{class_type}({game}, {name})".format(
                 class_type=type(self).__name__,
+                game=repr(game),
                 name="" if self.name == self.DEFAULT_NAME else \
                         "name={name}".format(name=repr(self.name))
                 )
@@ -27,38 +21,14 @@ class Player(object):
     def __str__(self):
         return self.name
 
-    def add_hand(self, hand):
-        if not isinstance(hand, Hand):
-            raise ValueError("hand is of wrong type")
-
-        self._hands.append(hand)
-
-    def get_hands(self):
-        return self._hands
-
     def get_game(self):
         return self._game
 
     def get_name(self):
         return self._name
 
-    def get_number_of_hands(self):
-        return len(self.hands)
-
-    def return_hands(self):
-        hands = self.hands
-        self._hands = []
-
-        return hands
-
-    def set_hands(self, hands):
-        self._hands = []
-
-        for hand in hands:
-            self.add_hand(hand)
-
     def set_game(self, game):
-        if not isinstance(game, blackjack.BlackJack):
+        if not isinstance(game, self.DEFAULT_GAME_TYPE):
             raise ValueError("game is of wrong type")
 
         self._game = game
@@ -70,6 +40,4 @@ class Player(object):
         self._name = name
 
     game = property(get_game, set_game)
-    hands = property(get_hands, set_hands)
     name = property(get_name, set_name)
-    number_of_hands = property(get_number_of_hands)

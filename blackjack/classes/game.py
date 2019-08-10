@@ -4,16 +4,18 @@ from blackjack.classes.player import Player
 
 
 class Game(object):
+    _PLAYER_TYPE = Player
+
     DEFAULT_NAME = "Game"
-    DEFAULT_PLAYER_NAMES = ("Player 1", "Player 2")
-    DEFAULT_PLAYER_TYPE = Player
+    DEFAULT_NUMBER_OF_PLAYERS = 0
+    DEFAULT_PLAYER_NAME_TEMPLATE = "Player {num}"
 
-    def __init__(self, name=DEFAULT_NAME, player_names=None):
-        if player_names is None:
-            player_names = self.DEFAULT_PLAYER_NAMES
-
+    def __init__(self, name=DEFAULT_NAME, players=DEFAULT_NUMBER_OF_PLAYERS,
+                 player_name_template=DEFAULT_PLAYER_NAME_TEMPLATE):
         self._name, self.name = None, name
-        self._players, self.players = [], player_names
+        self._players, self.players = [], [self._PLAYER_TYPE(self,
+                name=player_name_template.format(num=num+1))
+                        for num in range(players)]
 
     def __repr__(self):
         return "{class_type}({players})".format(
@@ -24,14 +26,20 @@ class Game(object):
     def __str__(self):
         return self.name
 
-    def add_player(self, player_name):
-        if not isinstance(player_name, str):
-            raise ValueError("player name is of wrong type")
+    def add_player(self, player):
+        if not isinstance(player, self._PLAYER_TYPE):
+            raise ValueError("player is of wrong type")
 
-        self._players.append(self.DEFAULT_PLAYER_TYPE(player_name))
+        self._players.append(player)
 
     def get_name(self):
         return self._name
+
+    def get_number_of_players(self):
+        return len(self.players)
+
+    def get_player_type(self):
+        return self._player_type
 
     def get_players(self):
         return self._players
@@ -42,15 +50,16 @@ class Game(object):
 
         self._name = name
 
-    def set_players(self, player_names):
-        if not isinstance(player_names, (list, tuple)):
-            raise ValueError("player names is of wrong type")
+    def set_players(self, players):
+        if not isinstance(players, (list, tuple)):
+            raise ValueError("players is of wrong type")
 
-        for player_name in player_names:
-            self.add_player(player_name)
+        for player in players:
+            self.add_player(player)
 
     def start(self):
         pass
 
     name = property(get_name, set_name)
+    number_of_players = property(get_number_of_players)
     players = property(get_players, set_players)

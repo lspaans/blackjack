@@ -5,6 +5,6 @@ import pytest
 from blackjack import Dealer
 
 
-def test_dealer():
-    """Tests constructor method with field values."""
-    assert isinstance(Dealer(), Dealer)
+def test_dealer(example_shoe):
+    """Tests constructor method."""
+    assert isinstance(Dealer(example_shoe), Dealer)

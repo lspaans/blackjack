@@ -1,6 +1,7 @@
 from blackjack import classes, exceptions
-from blackjack.classes import Bank, BlackJack, BlackJackCard, Dealer, Deck, \
-                              Game, Hand, Player, Shoe
+from blackjack.classes import Bank, BlackJack, BlackJackCard, \
+                              BlackJackPlayer, Dealer, Deck, Game, Hand, \
+                              Player, Shoe
 
 __author__ = "Léon Spaans"
 __email__ = "leons [at] gridpoint <dot> nl"
@@ -11,6 +12,7 @@ __all__ = (
     "Bank",
     "BlackJack",
     "BlackJackCard",
+    "BlackJackPlayer",
     "Dealer",
     "Deck",
     "Game",

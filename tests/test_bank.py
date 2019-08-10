@@ -5,6 +5,6 @@ import pytest
 from blackjack import Bank
 
 
-def test_bank():
-    """Tests constructor method with field values."""
-    assert isinstance(Bank(), Bank)
+def test_bank(example_game):
+    """Tests constructor method."""
+    assert isinstance(Bank(example_game), Bank)
