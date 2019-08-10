@@ -1,6 +1,7 @@
 """Hand."""
 
 from blackjack.classes.blackjackcard import BlackJackCard as Card
+from blackjack.exceptions.cannotsplit import CannotSplit
 from blackjack.exceptions.handbusted import HandBusted
 from blackjack.exceptions.playerbusted import PlayerBusted
 
@@ -60,6 +61,19 @@ class Hand(object):
 
         return list([total for total in set(totals) if total <= self.maximum])
 
+    def is_splittable(self, reason=False):
+        if len(self.cards) < 2:
+            return (False, "not enough cards") if reason is True else False
+
+        if len(self.cards) > 2:
+            return (False, "too many cards") if reason is True else False
+
+        if self.cards[0].face != self.cards[1].face:
+            return (False, "cards have different face") if reason is True \
+                    else False
+
+        return (True, None) if reason is True else False
+
     def set_cards(self, cards):
         self._cards = []
 
@@ -78,9 +92,18 @@ class Hand(object):
 
         self._name = name
 
+    def split(self):
+        (splittable, reason) = self.is_splittable(reason=True)
+
+        if splittable is False:
+            raise CannotSplit(reason)
+
+        return self.cards.pop(0)
+
     cards = property(get_cards, set_cards)
     highest_value = property(get_highest_value)
     lowest_value = property(get_lowest_value)
     maximum = property(get_maximum, set_maximum)
     name = property(get_name, set_name)
+    splittable = property(is_splittable)
     value = property(get_value)

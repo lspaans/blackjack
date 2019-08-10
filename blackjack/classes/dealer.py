@@ -4,6 +4,7 @@ from blackjack.classes.bank import Bank
 from blackjack.classes.hand import Hand
 from blackjack.classes.player import Player
 from blackjack.classes.shoe import Shoe
+from blackjack.exceptions.cannotsplit import CannotSplit
 from blackjack.exceptions.shoeempty import ShoeEmpty
 from blackjack.exceptions.handbusted import HandBusted
 from blackjack.exceptions.playerbusted import PlayerBusted
@@ -34,8 +35,13 @@ class Dealer(object):
 
         try: 
             if round == 1:
-                player.add_hand(Hand(self.shoe.deal(
-                    1 if isinstance(player, Bank) else 2)))
+                if isinstance(player, Bank):
+                    player.add_hand(Hand(self.shoe.deal(1)))
+                else:
+                    player.add_hand(Hand(self.shoe.deal(2)))
+
+                    if player.hands[0].splittable is True:
+                        player.add_hand(Hand(player.hands[0].split))
             else:
                 pass
         except ShoeEmpty as exc:
