@@ -1,5 +1,7 @@
 """Game."""
 
+import logging
+
 from blackjack.classes.player import Player
 
 
@@ -10,8 +12,10 @@ class Game(object):
     DEFAULT_NUMBER_OF_PLAYERS = 0
     DEFAULT_PLAYER_NAME_TEMPLATE = "Player {num}"
 
-    def __init__(self, name=DEFAULT_NAME, players=DEFAULT_NUMBER_OF_PLAYERS,
+    def __init__(self, logger_name=__name__, name=DEFAULT_NAME,
+                 players=DEFAULT_NUMBER_OF_PLAYERS,
                  player_name_template=DEFAULT_PLAYER_NAME_TEMPLATE):
+        self._logger, self.logger = None, logging.getLogger(logger_name)
         self._name, self.name = None, name
         self._players, self.players = [], [self._PLAYER_TYPE(self,
                 name=player_name_template.format(num=num+1))
@@ -32,6 +36,9 @@ class Game(object):
 
         self._players.append(player)
 
+    def get_logger(self):
+        return self._logger
+
     def get_name(self):
         return self._name
 
@@ -43,6 +50,12 @@ class Game(object):
 
     def get_players(self):
         return self._players
+
+    def set_logger(self, logger):
+        if not isinstance(logger, logging.Logger):
+            raise ValueError("logger is of wrong type")
+
+        self._logger = logger
 
     def set_name(self, name):
         if not isinstance(name, str):
@@ -58,8 +71,9 @@ class Game(object):
             self.add_player(player)
 
     def start(self):
-        pass
+        self.logger.info("{name} started.".format(name=self.name))
 
+    logger = property(get_logger, set_logger)
     name = property(get_name, set_name)
     number_of_players = property(get_number_of_players)
     players = property(get_players, set_players)
