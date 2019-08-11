@@ -24,6 +24,29 @@ class BlackJackPlayer(Player):
 
         self._hands.append(hand)
 
+    @staticmethod
+    def _draws(player_hand, bank_hand):
+        pass
+
+    @staticmethod
+    def _splits(player_hand, bank_hand):
+        pass
+
+    @staticmethod
+    def _stands(player_hand, bank_hand):
+        pass
+
+    def get_action(self, player_hand, bank_hand):
+        if self._draws(player_hand, bank_hand) is True:
+            return "draw"
+        elif self._splits(player_hand, bank_hand) is True:
+            return "split"
+        elif self._stands(player_hand, bankd_hand) is True:
+            return "stand"
+        else:
+            # Introduce `UndecidedAction` here?
+            raise ValueError("unknown action error")
+
     def get_hands(self):
         return self._hands
 
