@@ -5,6 +5,6 @@ import pytest
 from blackjack import Player
 
 
-def test_player(example_game):
+def test_player(example_blackjack):
     """Tests constructor method."""
-    assert isinstance(Player(example_game), Player)
+    assert isinstance(Player(example_blackjack), Player)

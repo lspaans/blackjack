@@ -1,5 +1,5 @@
 from blackjack import classes, exceptions
-from blackjack.classes import Bank, BlackJack, BlackJackCard, \
+from blackjack.classes import Bank, BlackJack, BlackJackCard, Card, \
                               BlackJackPlayer, Dealer, Deck, Game, Hand, \
                               Player, Shoe
 
@@ -13,6 +13,7 @@ __all__ = (
     "BlackJack",
     "BlackJackCard",
     "BlackJackPlayer",
+    "Card",
     "Dealer",
     "Deck",
     "Game",
